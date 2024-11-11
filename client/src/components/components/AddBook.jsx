@@ -53,25 +53,49 @@ const AddBook = () => {
     try {
       validateBookData(bookData);
 
-      await axios.post("http://localhost:8080/api/books", bookData);
-      toast({
-        title: "Book Added Successfully!",
-        description: "The book has been added to your library.",
-        duration: 3000,
-        isClosable: true,
-      });
+      const response = await axios.post("http://localhost:8080/api/books", bookData);
 
-      setAddedBooks([...addedBooks, bookData]);
-      resetTableInput();
+      if (response && response.status === 200) {
+        toast({
+          title: "Book Added Successfully!",
+          description: "The book has been added to your library.",
+          duration: 3000,
+          isClosable: true,
+        });
+
+        setAddedBooks([...addedBooks, bookData]);
+        resetTableInput();
+      } else {
+        throw new Error("Unexpected response status from server.");
+      }
     } catch (e) {
-      console.log("Validation error:", e);
-      toast({
-        title: "Failed to Add Book",
-        description: "There was an error with the book data.",
-        duration: 3000,
-        isClosable: true,
-        variant: "destructive",
-      });
+      if (e.response) {
+        console.log("Server error:", e.response.status, e.response.data);
+        toast({
+          title: "Server Error",
+          description: "There was an error on the server. Please try again.",
+          duration: 3000,
+          isClosable: true,
+          variant: "destructive",
+        });
+      } else if (e.request) {
+        console.log("Network error:", e.message);
+        toast({
+          title: "Book Added Successfully!",
+          description: "The book has been added to your library.",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        console.log("Validation error:", e.message);
+        toast({
+          title: "Failed to Add Book",
+          description: e.message,
+          duration: 3000,
+          isClosable: true,
+          variant: "destructive",
+        });
+      }
       resetTableInput();
     }
   };
@@ -99,7 +123,7 @@ const AddBook = () => {
 
     if (!publicationDate || isNaN(Date.parse(publicationDate))) {
       throw new Error("Publication date is required and must be a valid date.");
-    } else if (new Date(Date.parse(publicationDate)) > new Date()) {
+    } else if (new Date(publicationDate) > new Date()) {
       throw new Error("Publication date cannot be in the future.");
     }
 
@@ -231,6 +255,7 @@ const AddBook = () => {
 };
 
 export default AddBook;
+
 
 
 
