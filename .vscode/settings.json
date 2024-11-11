@@ -1,0 +1,19 @@
+{
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "book_inventory_management_system",
+      "group": "book_inventory_management_system",
+      "database": "book_inventory_management_system",
+      "username": "root",
+      "password": "J.A.M.E.S6273"
+    }
+  ]
+}
